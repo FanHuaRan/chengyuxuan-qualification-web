@@ -1,24 +1,43 @@
 import request from '@/utils/request'
+import md5 from 'js-md5';
 
 export function login(data) {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/oauth/token',
     method: 'post',
-    data
+    transformRequest: [
+      function (data) {
+        let ret = ''
+        for (let it in data) {
+          ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+        }
+        ret = ret.substring(0, ret.lastIndexOf('&'));
+        return ret
+      }
+    ],
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data:{
+      'grant_type': 'password',
+      'username':   data.username,
+      'password': md5(data.password),
+      'client_id': 'client_qualification_web',
+      'client_secret': 'c963b182e7539a2b073e8a8fbfd85356',
+    }
   })
 }
 
-export function getInfo(token) {
+export function getInfo() {
   return request({
-    url: '/vue-admin-template/user/info',
+    url: '/account/me',
     method: 'get',
-    params: { token }
   })
 }
 
 export function logout() {
   return request({
-    url: '/vue-admin-template/user/logout',
+    url: '/account/logout',
     method: 'post'
   })
 }
