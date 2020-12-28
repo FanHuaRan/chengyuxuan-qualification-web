@@ -13,7 +13,8 @@ import store from './store'
 import router from './router'
 
 import '@/icons' // icon
-import '@/permission' // permission control
+import '@/permission'
+import {parseTime} from "@/utils"; // permission control
 
 /**
  * If you don't want to use mock-server
@@ -34,6 +35,8 @@ Vue.use(ElementUI, { locale })
 // Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+// 绑定一些全局function
+Vue.prototype.parseTime = parseTime;
 
 new Vue({
   el: '#app',
