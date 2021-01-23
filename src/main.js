@@ -38,6 +38,12 @@ Vue.config.productionTip = false
 // 绑定一些全局function
 Vue.prototype.parseTime = parseTime;
 
+Array.prototype.remove = function(from, to) {
+  const rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push.apply(this, rest);
+};
+
 new Vue({
   el: '#app',
   router,
