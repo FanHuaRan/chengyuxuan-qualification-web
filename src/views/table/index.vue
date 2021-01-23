@@ -48,7 +48,7 @@
       <!--      </el-table-column>-->
       <el-table-column align="center" prop="updater" label="最后修改人" width="200">
         <template slot-scope="scope">
-          <span>{{ formatTime(scope.row.updater) }}</span>
+          <span>{{ scope.row.updaterName }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="updated" label="修改时间" width="200">
@@ -85,7 +85,7 @@
     <el-dialog title="新增/编辑" :visible.sync="formVisible">
       <el-form :model="form">
         <el-form-item label="银行名称">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+          <el-input v-model="form.name" autocomplete="off" :readonly="form.id !== null"></el-input>
         </el-form-item>
         <el-form-item label="联系人电话">
           <el-input v-model="form.phone" autocomplete="off"></el-input>
