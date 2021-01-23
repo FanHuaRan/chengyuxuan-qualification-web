@@ -64,9 +64,15 @@ export const constantRoutes = [
     children: [
       {
         path: 'table',
-        name: 'Table',
+        name: '银行管理',
         component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        meta: { title: '银行管理', icon: 'table' }
+      },
+      {
+        path: 'questionnaire',
+        name: '问卷管理',
+        component: () => import('@/views/questionnaire/index'),
+        meta: { title: '问卷管理', icon: 'table' }
       },
       {
         path: 'tree',
