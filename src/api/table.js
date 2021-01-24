@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function allBank() {
+  return request({
+    url: '/bank/all',
+    method: 'get',
+  })
+}
+
 export function searchBank(params) {
   return request({
     url: '/bank/search_by_page',

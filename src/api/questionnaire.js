@@ -28,6 +28,6 @@ export function updateQuestionnaireStatus(params) {
   return request({
     url: '/questionnaire/update_status',
     method: 'post',
-    params: params
+    data: params
   })
 }

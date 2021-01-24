@@ -75,13 +75,13 @@
           <el-button
             v-if="scope.row.status === 1"
             size="mini"
-            type="danger"
+            type="info"
             @click="handleUpdateStatus(scope.row.id, 0)">下线
           </el-button>
           <el-button
             v-if="scope.row.status === 0"
             size="mini"
-            type="danger"
+            type="success"
             @click="handleUpdateStatus(scope.row.id, 1)">上线
           </el-button>
         </template>
@@ -149,19 +149,31 @@
                 <i class="el-icon-circle-plus" @click="onAnswerAdd"></i>
               </el-form-item>
 
-              <el-row v-for="(answer,index) in questionForm.questionAnswers">
-                <span style="margin-top: 5px"></span>
-                <el-col :span="10">
-                  <el-input v-model="answer.answerDesc" placeholder="请输入答案"></el-input>
-                </el-col>
-                <el-col :span="6">
-                  <el-select v-model="answer.matchBankIds" placeholder="请选择命中银行"></el-select>
-                </el-col>
-                <el-col :span="8">
-                  <el-button v-if="questionForm.questionAnswers.length > 1" type="danger" @click="questionForm.questionAnswers.remove(index)">删除</el-button>
-                </el-col>
-              </el-row>
-
+              <div v-for="(answer,index) in questionForm.questionOptions">
+                <p style="margin-top: 5px"></p>
+                <el-row>
+                  <el-col :span="10">
+                    <el-input v-model="answer.optionDesc" placeholder="请输入答案"></el-input>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-select v-model="answer.matchBankIds" filterable multiple placeholder="请选择命中银行">
+                      <el-option
+                        v-for="item in banks"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                      </el-option>
+                    </el-select>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-button v-if="questionForm.questionOptions.length > 1"
+                               type="danger"
+                               size="small"
+                               @click="questionForm.questionOptions.remove(index)">删除
+                    </el-button>
+                  </el-col>
+                </el-row>
+              </div>
             </el-form>
 
             <div slot="footer" class="dialog-footer">
@@ -186,6 +198,9 @@
     deleteQuestionnaire,
     updateQuestionnaireStatus
   } from '@/api/questionnaire'
+  import {
+    allBank,
+  } from '@/api/table'
   import {parseTime} from "@/utils";
 
   export default {
@@ -201,6 +216,7 @@
     },
     data() {
       return {
+        banks: [],
         list: null,
         listLoading: true,
         currentPage: 1,
@@ -219,10 +235,11 @@
         },
         formVisible: false,
         questionForm: {
+          questionEditIndex: null,
           questionDesc: null,
-          questionAnswers: [
+          questionOptions: [
             {
-              answerDesc: null,
+              optionDesc: null,
               matchBankIds: []
             }
           ],
@@ -233,6 +250,9 @@
 
     created() {
       this.fetchData()
+      allBank().then(response => {
+        this.banks = response.data
+      })
     },
 
     methods: {
@@ -270,7 +290,7 @@
       },
 
       handleUpdateStatus(id, status) {
-        this.$confirm('确认' + status === 1 ? '上线?' : '下线?', '提示', {
+        this.$confirm(status === 1? '确认上线?' : '确认下线?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -314,10 +334,27 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          const questions = []
+          this.form.questions.forEach((value, index) => {
+            const questionOptions = []
+            value.questionOptions.forEach((optionValue, optionIndex) => {
+              questionOptions.push({
+                optionSeq: optionIndex + 1,
+                optionDesc: optionValue.optionDesc,
+                matchBankIds: optionValue.matchBankIds
+              })
+            })
+
+            questions.push({
+              seq: index + 1,
+              questionDesc: value.questionDesc,
+              questionOptions: questionOptions
+            })
+          })
           const params = {
             "id": this.form.id,
             "name": this.form.name,
-            "questions": this.form.questions
+            "questions": questions
           }
           saveQuestionnaire(params).then(response => {
             this.form.id = null
@@ -331,31 +368,38 @@
       },
 
       onAnswerAdd() {
-       this.questionForm.questionAnswers.push({
-          answerDesc: null,
+        this.questionForm.questionOptions.push({
+          optionDesc: null,
           matchBankIds: []
-       });
+        });
       },
 
-      showQuestionEdit(index){
+      showQuestionEdit(index) {
         this.questionForm = {
+          questionEditIndex: index,
           questionDesc: this.form.questions[index].questionDesc,
-          questionAnswers: this.form.questions[index].questionAnswers,
+          questionOptions: this.form.questions[index].questionOptions,
         }
         this.questionFormVisible = true
       },
 
       handleQuestionSave() {
-        this.form.questions.push({
+        const question = {
           questionDesc: this.questionForm.questionDesc,
-          questionAnswers: this.questionForm.questionAnswers,
-        })
+          questionOptions: this.questionForm.questionOptions,
+        }
+        if (this.questionForm.questionEditIndex !== null){
+            this.form.questions.splice(this.questionForm.questionEditIndex, 1, question)
+        } else {
+          this.form.questions.push(question)
+        }
         this.questionFormVisible = false
         this.questionForm = {
+          questionEditIndex: null,
           questionDesc: null,
-          questionAnswers: [
+          questionOptions: [
             {
-              answerDesc: null,
+              optionDesc: null,
               matchBankIds: []
             }
           ],
@@ -364,11 +408,12 @@
 
       handleQuestionCancel() {
         this.questionFormVisible = false
-        this.questionForm ={
+        this.questionForm = {
+          questionEditIndex: null,
           questionDesc: null,
-            questionAnswers: [
+          questionOptions: [
             {
-              answerDesc: null,
+              optionDesc: null,
               matchBankIds: []
             }
           ],
