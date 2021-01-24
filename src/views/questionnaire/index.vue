@@ -240,7 +240,10 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteQuestionnaire(row.id).then(response => {
+          updateQuestionnaireStatus({
+            id: id,
+            status: status
+          }).then(response => {
             this.fetchData()
           })
         })
