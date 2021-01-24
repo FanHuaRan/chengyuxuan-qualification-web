@@ -44,7 +44,7 @@
         i
       </el-table-column>
 
-      <el-table-column class-name="status-col" label="Status" width="110" align="center">
+      <el-table-column class-name="status-col" label="状态" width="110" align="center">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status | statusFilter">{{ statusNameMap[scope.row.status.toString()] }}</el-tag>
         </template>
