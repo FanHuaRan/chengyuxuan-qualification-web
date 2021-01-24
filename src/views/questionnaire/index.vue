@@ -100,43 +100,73 @@
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="问题列表">
-          <i class="el-icon-circle-plus" @click="policeFormVisible=true"></i>
+          <i class="el-icon-circle-plus" @click="questionFormVisible=true"></i>
           <el-table
-            :data="form"
+            :data="form.questions"
             border
             fit
             highlight-current-row
           >
-            <el-table-column label="问题信息">
+            <el-table-column label="问题编号" width="100">
               <template slot-scope="scope">
-                {{ scope.row }}
+                {{ scope.$index + 1 }}
+              </template>
+            </el-table-column>
+
+            <el-table-column label="问题描述">
+              <template slot-scope="scope">
+                {{ scope.row.questionDesc }}
               </template>
             </el-table-column>
 
             <el-table-column align="center" label="操作" width="95">
               <template slot-scope="scope">
-                <i class="el-icon-setting" @click="showPoliceEdit(scope.row, scope.$index)"
+                <i class="el-icon-setting" @click="showQuestionEdit(scope.$index)"
                    style="margin-left: 10px"></i>
-                <i class="el-icon-delete-solid" @click="form.policies.remove(scope.$index)"
+                <i class="el-icon-delete-solid" @click="form.questions.remove(scope.$index)"
                    style="margin-left: 10px"></i>
               </template>
             </el-table-column>
           </el-table>
 
           <el-dialog
-            width="30%"
-            title="编辑政策"
-            :visible.sync="policeFormVisible"
+            width="60%"
+            title="编辑问题"
+            :visible.sync="questionFormVisible"
             append-to-body>
-            <el-input
-              type="textarea"
-              :rows="5"
-              placeholder="请输入内容"
-              v-model="policeForm.policeValue">
-            </el-input>
+
+            <el-form :model="form">
+              <el-form-item label="问题描述">
+                <el-input
+                  type="textarea"
+                  :rows="5"
+                  placeholder="请输入问题"
+                  v-model="questionForm.questionDesc">
+                </el-input>
+              </el-form-item>
+
+              <el-form-item label="答案选项">
+                <i class="el-icon-circle-plus" @click="onAnswerAdd"></i>
+              </el-form-item>
+
+              <el-row v-for="(answer,index) in questionForm.questionAnswers">
+                <span style="margin-top: 5px"></span>
+                <el-col :span="10">
+                  <el-input v-model="answer.answerDesc" placeholder="请输入答案"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-select v-model="answer.matchBankIds" placeholder="请选择命中银行"></el-select>
+                </el-col>
+                <el-col :span="8">
+                  <el-button v-if="questionForm.questionAnswers.length > 1" type="danger" @click="questionForm.questionAnswers.remove(index)">删除</el-button>
+                </el-col>
+              </el-row>
+
+            </el-form>
+
             <div slot="footer" class="dialog-footer">
-              <el-button @click="handlePoliceCancel">取 消</el-button>
-              <el-button type="primary" @click="handlePoliceSave">确 定</el-button>
+              <el-button @click="handleQuestionCancel">取 消</el-button>
+              <el-button type="primary" @click="handleQuestionSave">确 定</el-button>
             </div>
           </el-dialog>
         </el-form-item>
@@ -188,11 +218,16 @@
           questions: []
         },
         formVisible: false,
-        policeForm: {
-          policeValue: null,
-          policeIndex: null,
+        questionForm: {
+          questionDesc: null,
+          questionAnswers: [
+            {
+              answerDesc: null,
+              matchBankIds: []
+            }
+          ],
         },
-        policeFormVisible: false
+        questionFormVisible: false
       }
     },
 
@@ -295,27 +330,49 @@
         })
       },
 
-      showPoliceEdit(row, index) {
-        this.policeForm.policeIndex = index
-        this.policeForm.policeValue = row
-        this.policeFormVisible = true
+      onAnswerAdd() {
+       this.questionForm.questionAnswers.push({
+          answerDesc: null,
+          matchBankIds: []
+       });
       },
 
-      handlePoliceSave() {
-        if (this.policeForm.policeIndex !== null) {
-          this.form.policies.splice(this.policeForm.policeIndex, 1, this.policeForm.policeValue)
-        } else {
-          this.form.policies.push(this.policeForm.policeValue)
+      showQuestionEdit(index){
+        this.questionForm = {
+          questionDesc: this.form.questions[index].questionDesc,
+          questionAnswers: this.form.questions[index].questionAnswers,
         }
-        this.policeFormVisible = false
-        this.policeForm.policeIndex = null
-        this.policeForm.policeValue = null
+        this.questionFormVisible = true
       },
 
-      handlePoliceCancel() {
-        this.policeFormVisible = false
-        this.policeForm.policeIndex = null
-        this.policeForm.policeValue = null
+      handleQuestionSave() {
+        this.form.questions.push({
+          questionDesc: this.questionForm.questionDesc,
+          questionAnswers: this.questionForm.questionAnswers,
+        })
+        this.questionFormVisible = false
+        this.questionForm = {
+          questionDesc: null,
+          questionAnswers: [
+            {
+              answerDesc: null,
+              matchBankIds: []
+            }
+          ],
+        }
+      },
+
+      handleQuestionCancel() {
+        this.questionFormVisible = false
+        this.questionForm ={
+          questionDesc: null,
+            questionAnswers: [
+            {
+              answerDesc: null,
+              matchBankIds: []
+            }
+          ],
+        }
       },
     }
   }
