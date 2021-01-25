@@ -47,13 +47,7 @@ service.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 20000) {
-      Message({
-        message: res.detail || res.name || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
-      // 40001: need authorize,40008: Illegal token or  Token expired;
+      // 40001: need authorize,40005: Illegal token or  Token expired;
       if (res.code === 40001 || res.code === 40005) {
         // to re-login
         MessageBox.confirm('你的登录已过期, 你可以继续留在此页面或者重新登录', '登录过期', {
@@ -64,6 +58,26 @@ service.interceptors.response.use(
           store.dispatch('user/resetToken').then(() => {
             location.reload()
           })
+        })
+      } else if (res.code === 40003) { // 40003: no permission
+        MessageBox.confirm('您无权限操作', '无权限', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+        })
+      } else if (res.code === 40006 || res.error === "unauthorized") { // 40006: FAIL_AUTHORIZE
+        MessageBox.confirm('用户名或密码错误', '登录失败', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+        })
+      } else {
+        Message({
+          message: res.detail || res.name || 'Error',
+          type: 'error',
+          duration: 5 * 1000
         })
       }
       return Promise.reject(new Error(res.message || 'Error'))

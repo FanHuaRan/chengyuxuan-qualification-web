@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :inline="true" :model="searchForm" class="demo-form-inline">
       <el-form-item label="问卷ID">
-        <el-input v-model="searchForm.name" placeholder="请输入问卷ID"></el-input>
+        <el-input v-model="searchForm.id" placeholder="请输入问卷ID"></el-input>
       </el-form-item>
 
       <el-form-item label="问卷名称">
@@ -35,14 +35,15 @@
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="问卷名称" width="110" align="center">
+      <el-table-column label="问卷名称" width="210" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="是否生效" width="110" align="center">
         <template slot-scope="scope">
-          {{ scope.row.status === 1 ? "生效中": "未生效" }}
+          <el-tag v-if="scope.row.status === 1" effect="dark" type="primary">生效中</el-tag>
+          <el-tag v-if="scope.row.status === 0" effect="dark" type="danger">未生效</el-tag>
         </template>
       </el-table-column>
       <!--      <el-table-column class-name="status-col" label="Status" width="110" align="center">-->
@@ -53,6 +54,11 @@
       <el-table-column align="center" prop="updater" label="最后修改人" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.updaterName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" prop="created" label="创建时间" width="200">
+        <template slot-scope="scope">
+          <span>{{ formatTime(scope.row.created) }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="updated" label="修改时间" width="200">
@@ -100,7 +106,7 @@
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="问题列表">
-          <i class="el-icon-circle-plus" @click="questionFormVisible=true"></i>
+          <i class="el-icon-circle-plus" @click="onQuestionAdd"></i>
           <el-table
             :data="form.questions"
             border
@@ -265,7 +271,9 @@
         searchQuestionnaire({
           pageNum: this.currentPage,
           pageSize: this.pageSize,
+          id: this.searchForm.id,
           name: this.searchForm.name,
+          status: this.searchForm.status,
           sortField: "updated",
           sortMode: "desc"
         }).then(response => {
@@ -365,6 +373,20 @@
             this.fetchData()
           })
         })
+      },
+
+      onQuestionAdd() {
+        this.questionForm = {
+          questionEditIndex: null,
+          questionDesc: null,
+          questionOptions: [
+            {
+              optionDesc: null,
+              matchBankIds: []
+            }
+          ],
+        }
+        this.questionFormVisible = true
       },
 
       onAnswerAdd() {

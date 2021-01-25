@@ -51,6 +51,11 @@
           <span>{{ scope.row.updaterName }}</span>
         </template>
       </el-table-column>
+      <el-table-column align="center" prop="created" label="创建时间" width="200">
+        <template slot-scope="scope">
+          <span>{{ formatTime(scope.row.created) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column align="center" prop="updated" label="修改时间" width="200">
         <template slot-scope="scope">
           <span>{{ formatTime(scope.row.updated) }}</span>
