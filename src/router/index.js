@@ -58,14 +58,14 @@ export const constantRoutes = [
   {
     path: '/backend',
     component: Layout,
-    redirect: '/backend/table',
+    redirect: '/backend/bank',
     name: 'backend',
     meta: { title: '管理后台', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'table',
+        path: 'bank',
         name: '银行管理',
-        component: () => import('@/views/table/index'),
+        component: () => import('@/views/bank/index'),
         meta: { title: '银行管理', icon: 'table' }
       },
       {

@@ -46,11 +46,6 @@
           <el-tag v-if="scope.row.status === 0" effect="dark" type="danger">未生效</el-tag>
         </template>
       </el-table-column>
-      <!--      <el-table-column class-name="status-col" label="Status" width="110" align="center">-->
-      <!--        <template slot-scope  ="scope">-->
-      <!--          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
       <el-table-column align="center" prop="updater" label="最后修改人" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.updaterName }}</span>
