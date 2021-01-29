@@ -17,8 +17,8 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" size="small" @click="onSearch">查询</el-button>
-        <el-button type="danger" size="small" @click="onAdd">新增</el-button>
+        <el-button icon="el-icon-search" type="primary" size="small" @click="onSearch">查询</el-button>
+        <el-button icon="el-icon-circle-plus-outline" type="danger" size="small" @click="onAdd">新增</el-button>
       </el-form-item>
     </el-form>
 

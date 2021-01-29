@@ -12,6 +12,6 @@ export function updateCustomerStatus(params) {
   return request({
     url: '/customer/update_status',
     method: 'post',
-    params: params
+    data: params
   })
 }
