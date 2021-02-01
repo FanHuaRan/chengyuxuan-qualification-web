@@ -81,6 +81,8 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      @size-change="handlePageSizeChange"
+      @current-change="handleCurrentPageChange"
       layout="prev, pager, next"
       :current-page=currentPage
       :page-size=pageSize
@@ -192,6 +194,14 @@
         this.currentPage = 1
         this.fetchData()
       },
+      handlePageSizeChange(size){
+        this.pageSize = size;
+        this.fetchData()
+      },
+      handleCurrentPageChange(page){
+        this.currentPage = page;
+        this.fetchData()
+      },
       fetchData() {
         this.listLoading = true
         searchBank({
@@ -202,6 +212,7 @@
           sortMode: "desc"
         }).then(response => {
           this.list = response.data.items
+          this.total = response.data.total
           this.listLoading = false
         })
       },

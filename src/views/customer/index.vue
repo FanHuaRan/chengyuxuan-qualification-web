@@ -96,6 +96,8 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      @size-change="handlePageSizeChange"
+      @current-change="handleCurrentPageChange"
       layout="prev, pager, next"
       :current-page=currentPage
       :page-size=pageSize
@@ -206,11 +208,23 @@
           sortMode: "desc"
         }).then(response => {
           this.list = response.data.items
+          this.total = response.data.total
           this.listLoading = false
         }).catch(e => {
           this.listLoading = false
         })
       },
+
+      handlePageSizeChange(size){
+        this.pageSize = size;
+        this.fetchData()
+      },
+
+      handleCurrentPageChange(page){
+        this.currentPage = page;
+        this.fetchData()
+      },
+
       formatTime(timeStamp) {
         return parseTime(timeStamp, "{y}-{m}-{d} {h}:{i}:{s}")
       },
