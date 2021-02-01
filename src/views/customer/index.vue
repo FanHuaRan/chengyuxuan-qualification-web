@@ -130,6 +130,11 @@
             {{ scope.row.customerAge }}
           </template>
         </el-table-column>
+        <el-table-column label="问卷名称" width="150" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.paperName }}
+          </template>
+        </el-table-column>
         <el-table-column label="匹配银行">
           <template slot-scope="scope">
             <li v-for="value in scope.row.matchBankNames">
