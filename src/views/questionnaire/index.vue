@@ -74,6 +74,10 @@
             @click="handleDelete(scope.$index, scope.row)">删除
           </el-button>
           <el-button
+            size="mini"
+            @click="onClone(scope.$index, scope.row)">复制
+          </el-button>
+          <el-button
             v-if="scope.row.status === 1"
             size="mini"
             type="info"
@@ -169,6 +173,14 @@
                     </el-select>
                   </el-col>
                   <el-col :span="8">
+                    <el-button v-if="index < (questionForm.questionOptions.length - 1)"
+                               size="small"
+                               @click="onAnswerMoveOff(index)">下移
+                    </el-button>
+                    <el-button v-if="index > 0"
+                               size="small"
+                               @click="onAnswerMoveOn(index)">上移
+                    </el-button>
                     <el-button v-if="questionForm.questionOptions.length > 1"
                                type="danger"
                                size="small"
@@ -237,6 +249,7 @@
           questions: []
         },
         formVisible: false,
+        lastFormEditId: null,
         questionForm: {
           questionEditIndex: null,
           questionDesc: null,
@@ -247,7 +260,8 @@
             }
           ],
         },
-        questionFormVisible: false
+        questionFormVisible: false,
+        lastQuestionEditIndex: null,
       }
     },
 
@@ -323,27 +337,40 @@
       },
 
       onAdd() {
+        if (this.lastFormEditId != null){
+          this.form.id = null
+          this.form.name = null
+          this.form.status = null
+          this.form.questions = []
+        }
         this.formVisible = true
-        this.form.id = null
-        this.form.name = null
-        this.form.status = null
-        this.form.questions = []
+        this.lastFormEditId = null
       },
 
       onEdit(index, row) {
-        this.form.id = row.id
-        this.form.name = row.name
-        this.form.status = row.status
+        if (this.lastFormEditId !== row.id){
+          this.form.id = row.id
+          this.form.name = row.name
+          this.form.status = row.status
+          this.form.questions = row.questions
+        }
+        this.formVisible = true
+        this.lastFormEditId = row.id
+      },
+
+      onClone(index, row) {
+        this.form.name = row.name + "复制"
         this.form.questions = row.questions
         this.formVisible = true
       },
 
       handleCancel() {
-        this.form.id = null
-        this.form.name = null
-        this.form.status = null
-        this.form.questions = []
+        // this.form.id = null
+        // this.form.name = null
+        // this.form.status = null
+        // this.form.questions = []
         this.formVisible = false
+        // this.lastFormEditId = null
       },
 
       handleSave() {
@@ -380,23 +407,27 @@
             this.form.status = 0
             this.form.questions = []
             this.formVisible = false
+            this.lastFormEditId = null
             this.fetchData()
           })
         })
       },
 
       onQuestionAdd() {
-        this.questionForm = {
-          questionEditIndex: null,
-          questionDesc: null,
-          questionOptions: [
-            {
-              optionDesc: null,
-              matchBankIds: []
-            }
-          ],
+        if (this.lastQuestionEditIndex != null){
+          this.questionForm = {
+            questionEditIndex: null,
+            questionDesc: null,
+            questionOptions: [
+              {
+                optionDesc: null,
+                matchBankIds: []
+              }
+            ],
+          }
         }
         this.questionFormVisible = true
+        this.lastQuestionEditIndex = null
       },
 
       onAnswerAdd() {
@@ -406,6 +437,20 @@
         });
       },
 
+      onAnswerMoveOn(index) {
+        const swapIndex = index - 1
+        const arr = this.questionForm.questionOptions
+        arr[swapIndex] = arr.splice(index, 1, arr[swapIndex])[0];
+        this.questionForm.questionOptions = arr
+      },
+
+      onAnswerMoveOff(index) {
+        const swapIndex = index + 1
+        const arr = this.questionForm.questionOptions
+        arr[swapIndex] = arr.splice(index, 1, arr[swapIndex])[0];
+        this.questionForm.questionOptions = arr
+      },
+
       showQuestionEdit(index) {
         this.questionForm = {
           questionEditIndex: index,
@@ -413,6 +458,7 @@
           questionOptions: this.form.questions[index].questionOptions,
         }
         this.questionFormVisible = true
+        this.lastQuestionEditIndex = index
       },
 
       handleQuestionSave() {
@@ -425,6 +471,7 @@
         } else {
           this.form.questions.push(question)
         }
+        this.lastQuestionEditIndex = this.form.questions.length - 1
         this.questionFormVisible = false
         this.questionForm = {
           questionEditIndex: null,
@@ -440,16 +487,16 @@
 
       handleQuestionCancel() {
         this.questionFormVisible = false
-        this.questionForm = {
-          questionEditIndex: null,
-          questionDesc: null,
-          questionOptions: [
-            {
-              optionDesc: null,
-              matchBankIds: []
-            }
-          ],
-        }
+        // this.questionForm = {
+        //   questionEditIndex: null,
+        //   questionDesc: null,
+        //   questionOptions: [
+        //     {
+        //       optionDesc: null,
+        //       matchBankIds: []
+        //     }
+        //   ],
+        // }
       },
     }
   }
