@@ -77,6 +77,10 @@
             type="danger"
             @click="handleDelete(scope.$index, scope.row)">删除
           </el-button>
+          <el-button
+            size="mini"
+            @click="onClone(scope.$index, scope.row)">复制
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -92,13 +96,13 @@
     <el-dialog title="新增/编辑" :visible.sync="formVisible">
       <el-form :model="form">
         <el-form-item label="银行名称">
-          <el-input v-model="form.name" autocomplete="off" :readonly="form.id !== null"></el-input>
+          <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="联系人电话">
           <el-input v-model="form.phone" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="政策">
-          <i class="el-icon-circle-plus" @click="policeFormVisible=true"></i>
+          <i class="el-icon-circle-plus" @click="onPoliceAdd"></i>
           <el-table
             :data="form.policies"
             border
@@ -177,11 +181,13 @@
           policies: []
         },
         formVisible: false,
+        lastEditFormId: null,
         policeForm: {
           policeValue: null,
           policeIndex: null,
         },
-        policeFormVisible: false
+        policeFormVisible: false,
+        lastPoliceEditIndex: null,
       }
     },
 
@@ -233,26 +239,39 @@
       },
 
       onAdd(){
+        if (this.lastFormEditId !== null){
+          this.form.id = null
+          this.form.name = null
+          this.form.phone = null
+          this.form.policies = []
+        }
+        this.lastFormEditId = null
         this.formVisible = true
-        this.form.id = null
-        this.form.name = null
-        this.form.phone = null
-        this.form.policies = []
       },
 
       onEdit(index, row) {
-        this.form.id = row.id
-        this.form.name = row.name
+        if (this.lastFormEditId !== row.id){
+          this.form.id = row.id
+          this.form.name = row.name
+          this.form.phone = row.phone
+          this.form.policies = row.policies
+        }
+        this.lastFormEditId = row.id
+        this.formVisible = true
+      },
+
+      onClone(index, row) {
+        this.form.name = row.name + "复制"
         this.form.phone = row.phone
         this.form.policies = row.policies
         this.formVisible = true
       },
 
       handleCancel() {
-        this.form.id = null
-        this.form.name = null
-        this.form.phone = null
-        this.form.policies = []
+        // this.form.id = null
+        // this.form.name = null
+        // this.form.phone = null
+        // this.form.policies = []
         this.formVisible = false
       },
 
@@ -274,15 +293,28 @@
             this.form.phone = null
             this.form.policies = []
             this.formVisible = false
+            this.lastFormEditId = null
             this.fetchData()
           })
         })
       },
 
-      showPoliceEdit(row, index) {
-        this.policeForm.policeIndex = index
-        this.policeForm.policeValue = row
+      onPoliceAdd(){
+        if (this.lastPoliceEditIndex !== null){
+          this.policeForm.policeIndex = null
+          this.policeForm.policeValue = null
+        }
         this.policeFormVisible = true
+        this.lastPoliceEditIndex = null
+      },
+
+      showPoliceEdit(row, index) {
+        if (this.lastPoliceEditIndex !== index){
+          this.policeForm.policeIndex = index
+          this.policeForm.policeValue = row
+        }
+        this.policeFormVisible = true
+        this.lastPoliceEditIndex = index
       },
 
       handlePoliceSave() {
@@ -294,12 +326,13 @@
         this.policeFormVisible = false
         this.policeForm.policeIndex = null
         this.policeForm.policeValue = null
+        this.lastPoliceEditIndex = null
       },
 
       handlePoliceCancel() {
         this.policeFormVisible = false
-        this.policeForm.policeIndex = null
-        this.policeForm.policeValue = null
+        // this.policeForm.policeIndex = null
+        // this.policeForm.policeValue = null
       },
     }
   }
