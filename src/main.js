@@ -28,6 +28,8 @@ if (process.env.NODE_ENV === 'production') {
   const { mockXHR } = require('../mock')
   mockXHR()
 }
+// 修改 el-dialog 默认点击遮照为不关闭
+ElementUI.Dialog.props.closeOnClickModal.default = false
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
