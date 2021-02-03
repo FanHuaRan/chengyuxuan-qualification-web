@@ -126,8 +126,13 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" label="操作" width="95">
+            <el-table-column align="center" label="操作" width="150">
               <template slot-scope="scope">
+                <i v-if="scope.$index < (form.questions.length - 1)"
+                   class="el-icon-bottom" @click="onQuestionMoveOff(scope.$index)"></i>
+                <i v-if="scope.$index > 0"
+                   class="el-icon-top" @click="onQuestionMoveOn(scope.$index)"
+                   style="margin-left: 10px"></i>
                 <i class="el-icon-setting" @click="showQuestionEdit(scope.$index)"
                    style="margin-left: 10px"></i>
                 <i class="el-icon-delete-solid" @click="form.questions.remove(scope.$index)"
@@ -359,6 +364,7 @@
       },
 
       onClone(index, row) {
+        this.form.id = null
         this.form.name = row.name + "复制"
         this.form.questions = row.questions
         this.formVisible = true
@@ -435,6 +441,20 @@
           optionDesc: null,
           matchBankIds: []
         });
+      },
+
+      onQuestionMoveOn(index) {
+        const swapIndex = index - 1
+        const arr = this.form.questions
+        arr[swapIndex] = arr.splice(index, 1, arr[swapIndex])[0];
+        this.form.questions = arr
+      },
+
+      onQuestionMoveOff(index) {
+        const swapIndex = index + 1
+        const arr = this.form.questions
+        arr[swapIndex] = arr.splice(index, 1, arr[swapIndex])[0];
+        this.form.questions = arr
       },
 
       onAnswerMoveOn(index) {

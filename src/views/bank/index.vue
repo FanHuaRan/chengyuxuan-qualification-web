@@ -261,6 +261,7 @@
       },
 
       onClone(index, row) {
+        this.form.id = null
         this.form.name = row.name + "复制"
         this.form.phone = row.phone
         this.form.policies = row.policies
