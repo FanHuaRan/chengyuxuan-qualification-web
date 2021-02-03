@@ -186,6 +186,9 @@
                                size="small"
                                @click="onAnswerMoveOn(index)">上移
                     </el-button>
+                    <el-button size="small"
+                               @click="OnCloneAnswer(index)">复制
+                    </el-button>
                     <el-button v-if="questionForm.questionOptions.length > 1"
                                type="danger"
                                size="small"
@@ -441,6 +444,14 @@
           optionDesc: null,
           matchBankIds: []
         });
+      },
+
+      OnCloneAnswer(index){
+        const answer = {
+          optionDesc: this.questionForm.questionOptions[index].optionDesc,
+          matchBankIds: this.questionForm.questionOptions[index].matchBankIds
+        }
+        this.questionForm.questionOptions.splice(index, 0, answer)
       },
 
       onQuestionMoveOn(index) {
