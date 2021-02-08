@@ -135,6 +135,8 @@
                    style="margin-left: 10px"></i>
                 <i class="el-icon-setting" @click="showQuestionEdit(scope.$index)"
                    style="margin-left: 10px"></i>
+                <i class="el-icon-copy-document" @click="OnCloneQuestion(scope.$index)"
+                   style="margin-left: 10px"></i>
                 <i class="el-icon-delete-solid" @click="form.questions.remove(scope.$index)"
                    style="margin-left: 10px"></i>
               </template>
@@ -437,6 +439,14 @@
         }
         this.questionFormVisible = true
         this.lastQuestionEditIndex = null
+      },
+
+      OnCloneQuestion(index){
+        const question = {
+          questionDesc: this.form.questions[index].questionDesc,
+          questionOptions: this.form.questions[index].questionOptions,
+        }
+        this.form.questions.splice(index, 0, question)
       },
 
       onAnswerAdd() {
