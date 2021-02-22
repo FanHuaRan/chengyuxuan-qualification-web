@@ -347,23 +347,23 @@
       },
 
       onAdd() {
-        if (this.lastFormEditId != null){
+        // if (this.lastFormEditId != null){
           this.form.id = null
           this.form.name = null
           this.form.status = null
           this.form.questions = []
-        }
+        // }
         this.formVisible = true
         this.lastFormEditId = null
       },
 
       onEdit(index, row) {
-        if (this.lastFormEditId !== row.id){
+        // if (this.lastFormEditId !== row.id){
           this.form.id = row.id
           this.form.name = row.name
           this.form.status = row.status
           this.form.questions = row.questions
-        }
+        // }
         this.formVisible = true
         this.lastFormEditId = row.id
       },
@@ -425,7 +425,7 @@
       },
 
       onQuestionAdd() {
-        if (this.lastQuestionEditIndex != null){
+        // if (this.lastQuestionEditIndex != null){
           this.questionForm = {
             questionEditIndex: null,
             questionDesc: null,
@@ -436,7 +436,7 @@
               }
             ],
           }
-        }
+        // }
         this.questionFormVisible = true
         this.lastQuestionEditIndex = null
       },

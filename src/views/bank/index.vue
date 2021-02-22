@@ -239,23 +239,23 @@
       },
 
       onAdd(){
-        if (this.lastFormEditId !== null){
+        // if (this.lastFormEditId !== null){
           this.form.id = null
           this.form.name = null
           this.form.phone = null
           this.form.policies = []
-        }
+        // }
         this.lastFormEditId = null
         this.formVisible = true
       },
 
       onEdit(index, row) {
-        if (this.lastFormEditId !== row.id){
+        // if (this.lastFormEditId !== row.id){
           this.form.id = row.id
           this.form.name = row.name
           this.form.phone = row.phone
           this.form.policies = row.policies
-        }
+        // }
         this.lastFormEditId = row.id
         this.formVisible = true
       },
@@ -301,19 +301,19 @@
       },
 
       onPoliceAdd(){
-        if (this.lastPoliceEditIndex !== null){
+        // if (this.lastPoliceEditIndex !== null){
           this.policeForm.policeIndex = null
           this.policeForm.policeValue = null
-        }
+        // }
         this.policeFormVisible = true
         this.lastPoliceEditIndex = null
       },
 
       showPoliceEdit(row, index) {
-        if (this.lastPoliceEditIndex !== index){
+        // if (this.lastPoliceEditIndex !== index){
           this.policeForm.policeIndex = index
           this.policeForm.policeValue = row
-        }
+        // }
         this.policeFormVisible = true
         this.lastPoliceEditIndex = index
       },
