@@ -126,7 +126,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" label="操作" width="150">
+            <el-table-column align="center" label="操作" width="200">
               <template slot-scope="scope">
                 <i v-if="scope.$index < (form.questions.length - 1)"
                    class="el-icon-bottom" @click="onQuestionMoveOff(scope.$index)"></i>
@@ -138,6 +138,8 @@
                 <i class="el-icon-copy-document" @click="OnCloneQuestion(scope.$index)"
                    style="margin-left: 10px"></i>
                 <i class="el-icon-delete-solid" @click="form.questions.remove(scope.$index)"
+                   style="margin-left: 10px"></i>
+                <i class="el-icon-d-caret" @click="onQuestionMove(scope.$index)"
                    style="margin-left: 10px"></i>
               </template>
             </el-table-column>
@@ -206,6 +208,27 @@
               <el-button type="primary" @click="handleQuestionSave">确 定</el-button>
             </div>
           </el-dialog>
+
+          <el-dialog
+            width="30%"
+            title="移动问题"
+            :visible.sync="questionMoveFormVisible"
+            append-to-body>
+            <el-form>
+              <el-form-item label="问题序号">
+                <el-input-number
+                  :min="0"
+                  :max="form.questions.length"
+                  v-model="destMoveQuestionSeq">
+                </el-input-number>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="questionMoveFormVisible = false">取 消</el-button>
+              <el-button type="primary" @click="handleQuestionMove">确 定</el-button>
+            </div>
+          </el-dialog>
+
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -271,6 +294,9 @@
           ],
         },
         questionFormVisible: false,
+        questionMoveFormVisible: false,
+        waitMoveQuestionIndex: null,
+        destMoveQuestionSeq: null,
         lastQuestionEditIndex: null,
       }
     },
@@ -539,6 +565,31 @@
         //   ],
         // }
       },
+
+      onQuestionMove(index) {
+        this.waitMoveQuestionIndex = index
+        this.questionMoveFormVisible = true
+      },
+
+      handleQuestionMove(){
+        if (this.waitMoveQuestionIndex === null){
+          return
+        }
+        if (this.destMoveQuestionSeq === null){
+          return
+        }
+        if (this.destMoveQuestionSeq <= 0 || this.destMoveQuestionSeq > this.form.questions.length){
+          return;
+        }
+        const index = this.waitMoveQuestionIndex
+        const swapIndex = this.destMoveQuestionSeq - 1
+        const arr = this.form.questions
+        arr[swapIndex] = arr.splice(index, 1, arr[swapIndex])[0];
+        this.form.questions = arr
+        this.waitMoveQuestionIndex = null
+        this.destMoveQuestionSeq = null
+        this.questionMoveFormVisible = false
+      }
     }
   }
 </script>
