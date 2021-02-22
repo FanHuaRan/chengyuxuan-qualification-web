@@ -60,7 +60,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/backend/bank',
     name: 'backend',
-    meta: { title: '管理后台', icon: 'el-icon-s-help' },
+    meta: { title: '管理后台', icon: 'el-icon-s-help', roles: ['admin'] },
     children: [
       {
         path: 'bank',
@@ -79,6 +79,12 @@ export const constantRoutes = [
         name: '客户管理',
         component: () => import('@/views/customer/index'),
         meta: { title: '客户管理', icon: 'el-icon-s-custom' }
+      },
+      {
+        path: 'account',
+        name: '账号管理',
+        component: () => import('@/views/account/index'),
+        meta: { title: '账号管理', icon: 'el-icon-user-solid' }
       },
       // {
       //   path: 'tree',
