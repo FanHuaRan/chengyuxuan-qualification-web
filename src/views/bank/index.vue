@@ -264,7 +264,7 @@
         this.form.id = null
         this.form.name = row.name + "复制"
         this.form.phone = row.phone
-        this.form.policies = row.policies
+        this.form.policies = JSON.parse(JSON.stringify(row.policies))
         this.formVisible = true
       },
 

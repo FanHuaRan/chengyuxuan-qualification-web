@@ -371,7 +371,7 @@
       onClone(index, row) {
         this.form.id = null
         this.form.name = row.name + "复制"
-        this.form.questions = row.questions
+        this.form.questions = JSON.parse(JSON.stringify(row.questions))
         this.formVisible = true
       },
 
@@ -444,7 +444,7 @@
       OnCloneQuestion(index){
         const question = {
           questionDesc: this.form.questions[index].questionDesc,
-          questionOptions: this.form.questions[index].questionOptions,
+          questionOptions: JSON.parse(JSON.stringify(this.form.questions[index].questionOptions)),
         }
         this.form.questions.splice(index, 0, question)
       },
@@ -459,7 +459,7 @@
       OnCloneAnswer(index){
         const answer = {
           optionDesc: this.questionForm.questionOptions[index].optionDesc,
-          matchBankIds: this.questionForm.questionOptions[index].matchBankIds
+          matchBankIds: JSON.parse(JSON.stringify(this.questionForm.questionOptions[index].matchBankIds))
         }
         this.questionForm.questionOptions.splice(index, 0, answer)
       },
