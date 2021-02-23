@@ -58,6 +58,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column class-name="status-col" label="最后修改人" width="110" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.updaterName }}
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" prop="updated" label="问卷记录" width="200">
         <template slot-scope="scope">
           <el-button icon="el-icon-zoom-in"  size="mini"  @click="handleShowCommit(scope.row.phone)">点击查看</el-button>
@@ -105,7 +111,7 @@
     </el-pagination>
 
     <el-dialog
-            width="60%"
+            width="90%"
             title="问卷记录"
             :visible.sync="showCommitVisible">
       <el-table
@@ -143,6 +149,18 @@
           </template>
         </el-table-column>
 
+        <el-table-column class-name="status-col" label="提交人" width="110" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.updaterName }}
+          </template>
+        </el-table-column>
+
+        <el-table-column align="center" prop="updated" label="提交记录" width="200">
+          <template slot-scope="scope">
+            <el-button icon="el-icon-zoom-in"  size="mini"  @click="handlerShowCommitDetail(scope.row)">点击查看</el-button>
+          </template>
+        </el-table-column>
+
         <el-table-column align="center" prop="updated" label="提交时间" width="200">
           <template slot-scope="scope">
             <span>{{ formatTime(scope.row.commitTime) }}</span>
@@ -150,6 +168,38 @@
         </el-table-column>
       </el-table>
 
+      <div slot="footer" class="dialog-footer">
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      width="50%"
+      title="提交记录"
+      :visible.sync="showCommitDetailVisible">
+
+      <div style="margin: auto">
+        <p>姓名：{{showCommitDetail.customerName}}</p>
+        <p>电话：{{showCommitDetail.customerPhone}}</p>
+        <p>年龄：{{showCommitDetail.customerAge}}</p>
+      <el-table
+        :data="showCommitDetail.items"
+        element-loading-text="Loading"
+        border
+        fit
+        highlight-current-row
+      >
+        <el-table-column label="问题" width="150" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.questionDesc }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="答案" width="150" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.answerDesc }}
+          </template>
+        </el-table-column>
+      </el-table>
+      </div>
       <div slot="footer" class="dialog-footer">
       </div>
     </el-dialog>
@@ -189,7 +239,14 @@
           "-1": "拉黑",
         },
         showCommitVisible: false,
-        commits:[]
+        commits:[],
+        showCommitDetailVisible: false,
+        showCommitDetail:{
+          customerName: null,
+          customerPhone: null,
+          customerAge: null,
+          items: []
+        }
       }
     },
 
@@ -256,6 +313,18 @@
             this.showCommitVisible = true
           })
       },
+
+      handlerShowCommitDetail(row){
+        const commitHistory = row.commitHistory
+        if (commitHistory === null){
+          return
+        }
+        this.showCommitDetail.customerName = commitHistory.customerName
+        this.showCommitDetail.customerPhone = commitHistory.customerPhone
+        this.showCommitDetail.customerAge = commitHistory.customerAge
+        this.showCommitDetail.items = commitHistory.items
+        this.showCommitDetailVisible = true
+      }
     }
   }
 </script>
