@@ -72,7 +72,7 @@
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row)">充值
+            @click="onRecharge(scope.$index, scope.row)">充值
           </el-button>
           <el-button
             size="mini"
