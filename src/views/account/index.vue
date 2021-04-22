@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
 
-    <el-form :inline="true" :model="searchForm" class="demo-form-inline">
+    <el-form :inline="true" class="demo-form-inline">
       <el-form-item>
         <el-button icon="el-icon-circle-plus-outline" type="danger" size="small" @click="onAdd">新增</el-button>
       </el-form-item>
@@ -68,6 +68,24 @@
 
     <el-dialog title="新增/编辑" :visible.sync="formVisible">
       <el-form :model="form">
+        <el-form-item v-if=" name === 'admin' || name === 'chengyuxuan'" label="企业">
+          <el-select v-model="form.enterpriseId" filterable placeholder="请选择">
+            <el-option
+              v-for="item in enterprises"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="角色">
+          <el-select v-model="form.roles" filterable multiple placeholder="角色">
+            <el-option v-if=" name === 'admin' || name === 'chengyuxuan'" key="enterpriser" label="enterpriser"
+                       value="enterpriser"></el-option>
+            <el-option key="worker" label="worker" value="worker"></el-option>
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="用户名">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
@@ -88,8 +106,10 @@
 
 <script>
   import {searchAccount, saveAccount, deleteAccount} from '@/api/account'
+  import {allEnterprise} from '@/api/enterprise'
   import {parseTime} from "@/utils";
   import md5 from 'js-md5';
+  import {mapGetters} from "vuex";
 
   export default {
     filters: {
@@ -102,8 +122,16 @@
         return statusMap[status]
       },
     },
+    name: '',
+    computed: {
+      ...mapGetters([
+        'name'
+      ])
+    },
+
     data() {
       return {
+        enterprises: [],
         list: null,
         listLoading: true,
         currentPage: 1,
@@ -112,6 +140,8 @@
         form: {
           id: null,
           name: null,
+          enterpriseId: null,
+          roles: [],
           nickName: null,
           password: null,
         },
@@ -121,6 +151,9 @@
 
     created() {
       this.fetchData()
+      allEnterprise().then(response => {
+        this.enterprises = response.data
+      })
     },
 
     methods: {
@@ -128,11 +161,11 @@
         this.currentPage = 1
         this.fetchData()
       },
-      handlePageSizeChange(size){
+      handlePageSizeChange(size) {
         this.pageSize = size;
         this.fetchData()
       },
-      handleCurrentPageChange(page){
+      handleCurrentPageChange(page) {
         this.currentPage = page;
         this.fetchData()
       },
@@ -168,6 +201,8 @@
         this.form.name = null
         this.form.nickName = null
         this.form.password = null
+        this.form.enterpriseId = null
+        this.form.roles = []
         this.formVisible = true
       },
 
@@ -175,6 +210,8 @@
         this.form.id = row.id
         this.form.name = row.name
         this.form.nickName = row.nickName
+        this.form.enterpriseId = row.enterpriseId
+        this.form.roles = row.roles
         this.formVisible = true
       },
 
@@ -189,13 +226,15 @@
           type: 'warning'
         }).then(() => {
           let password = null
-          if (this.form.password !== null && this.form.password !== ''){
+          if (this.form.password !== null && this.form.password !== '') {
             password = md5(this.form.password)
           }
           const params = {
             "id": this.form.id,
             "name": this.form.name,
             "nickName": this.form.nickName,
+            "enterpriseId": this.form.enterpriseId,
+            "roles": this.form.roles,
             "password": password
           }
           saveAccount(params).then(response => {
@@ -203,6 +242,8 @@
             this.form.name = null
             this.form.nickName = null
             this.form.password = null
+            this.form.enterpriseId = null
+            this.form.roles = []
             this.formVisible = false
             this.fetchData()
           })
