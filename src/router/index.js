@@ -64,6 +64,12 @@ export const constantRoutes = [
     children: [
       {
         path: 'bank',
+        name: '企业管理',
+        component: () => import('@/views/enterprise/index'),
+        meta: { title: '企业管理', icon: 'table' }
+      },
+      {
+        path: 'bank',
         name: '银行管理',
         component: () => import('@/views/bank/index'),
         meta: { title: '银行管理', icon: 'table' }
