@@ -40,6 +40,11 @@
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="答案必填" width="110" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.require ? "是" : "否" }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="是否生效" width="110" align="center">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 1" effect="dark" type="primary">生效中</el-tag>
@@ -105,6 +110,9 @@
       <el-form :model="form">
         <el-form-item label="问卷名称">
           <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="问题必填">
+          <el-switch v-model="form.require"></el-switch>
         </el-form-item>
         <el-form-item label="问题列表">
           <i class="el-icon-circle-plus" @click="onQuestionAdd"></i>
@@ -278,6 +286,7 @@
         form: {
           id: null,
           name: null,
+          require: null,
           status: 0,
           questions: []
         },
@@ -331,12 +340,12 @@
         })
       },
 
-      handlePageSizeChange(size){
+      handlePageSizeChange(size) {
         this.pageSize = size;
         this.fetchData()
       },
 
-      handleCurrentPageChange(page){
+      handleCurrentPageChange(page) {
         this.currentPage = page;
         this.fetchData()
       },
@@ -358,7 +367,7 @@
       },
 
       handleUpdateStatus(id, status) {
-        this.$confirm(status === 1? '确认上线?' : '确认下线?', '提示', {
+        this.$confirm(status === 1 ? '确认上线?' : '确认下线?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -374,10 +383,11 @@
 
       onAdd() {
         // if (this.lastFormEditId != null){
-          this.form.id = null
-          this.form.name = null
-          this.form.status = null
-          this.form.questions = []
+        this.form.id = null
+        this.form.name = null
+        this.form.require = null
+        this.form.status = null
+        this.form.questions = []
         // }
         this.formVisible = true
         this.lastFormEditId = null
@@ -385,10 +395,11 @@
 
       onEdit(index, row) {
         // if (this.lastFormEditId !== row.id){
-          this.form.id = row.id
-          this.form.name = row.name
-          this.form.status = row.status
-          this.form.questions = row.questions
+        this.form.id = row.id
+        this.form.name = row.name
+        this.form.require = row.require
+        this.form.status = row.status
+        this.form.questions = row.questions
         // }
         this.formVisible = true
         this.lastFormEditId = row.id
@@ -397,6 +408,7 @@
       onClone(index, row) {
         this.form.id = null
         this.form.name = row.name + "复制"
+        this.form.require = row.require
         this.form.questions = JSON.parse(JSON.stringify(row.questions))
         this.formVisible = true
       },
@@ -436,11 +448,13 @@
           const params = {
             "id": this.form.id,
             "name": this.form.name,
+            "require": this.form.require,
             "questions": questions
           }
           saveQuestionnaire(params).then(response => {
             this.form.id = null
             this.form.name = null
+            this.form.require = null
             this.form.status = 0
             this.form.questions = []
             this.formVisible = false
@@ -452,22 +466,22 @@
 
       onQuestionAdd() {
         // if (this.lastQuestionEditIndex != null){
-          this.questionForm = {
-            questionEditIndex: null,
-            questionDesc: null,
-            questionOptions: [
-              {
-                optionDesc: null,
-                matchBankIds: []
-              }
-            ],
-          }
+        this.questionForm = {
+          questionEditIndex: null,
+          questionDesc: null,
+          questionOptions: [
+            {
+              optionDesc: null,
+              matchBankIds: []
+            }
+          ],
+        }
         // }
         this.questionFormVisible = true
         this.lastQuestionEditIndex = null
       },
 
-      OnCloneQuestion(index){
+      OnCloneQuestion(index) {
         const question = {
           questionDesc: this.form.questions[index].questionDesc,
           questionOptions: JSON.parse(JSON.stringify(this.form.questions[index].questionOptions)),
@@ -482,7 +496,7 @@
         });
       },
 
-      OnCloneAnswer(index){
+      OnCloneAnswer(index) {
         const answer = {
           optionDesc: this.questionForm.questionOptions[index].optionDesc,
           matchBankIds: JSON.parse(JSON.stringify(this.questionForm.questionOptions[index].matchBankIds))
@@ -533,8 +547,8 @@
           questionDesc: this.questionForm.questionDesc,
           questionOptions: this.questionForm.questionOptions,
         }
-        if (this.questionForm.questionEditIndex !== null){
-            this.form.questions.splice(this.questionForm.questionEditIndex, 1, question)
+        if (this.questionForm.questionEditIndex !== null) {
+          this.form.questions.splice(this.questionForm.questionEditIndex, 1, question)
         } else {
           this.form.questions.push(question)
         }
@@ -571,14 +585,14 @@
         this.questionMoveFormVisible = true
       },
 
-      handleQuestionMove(){
-        if (this.waitMoveQuestionIndex === null){
+      handleQuestionMove() {
+        if (this.waitMoveQuestionIndex === null) {
           return
         }
-        if (this.destMoveQuestionSeq === null){
+        if (this.destMoveQuestionSeq === null) {
           return
         }
-        if (this.destMoveQuestionSeq <= 0 || this.destMoveQuestionSeq > this.form.questions.length){
+        if (this.destMoveQuestionSeq <= 0 || this.destMoveQuestionSeq > this.form.questions.length) {
           return;
         }
         const index = this.waitMoveQuestionIndex
