@@ -63,10 +63,10 @@ export const constantRoutes = [
     meta: { title: '管理后台', icon: 'el-icon-s-help', roles: ['admin'] },
     children: [
       {
-        path: 'bank',
+        path: 'enterprise',
         name: '企业管理',
         component: () => import('@/views/enterprise/index'),
-        meta: { title: '企业管理', icon: 'table' }
+        meta: { title: '企业管理', icon: 'el-icon-s-platform' }
       },
       {
         path: 'bank',

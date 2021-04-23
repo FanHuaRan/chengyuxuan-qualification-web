@@ -36,12 +36,12 @@
           {{ scope.row.paidType == 1 ? "按次付费" : "" }}
         </template>
       </el-table-column>
-      <el-table-column label="问卷剩余配置个数" width="110" align="center">
+      <el-table-column label="问卷剩余配置个数" width="210" align="center">
         <template slot-scope="scope">
           {{ scope.row.remainQuestionnaire}}
         </template>
       </el-table-column>
-      <el-table-column label="问卷剩余答题次数" width="110" align="center">
+      <el-table-column label="问卷剩余答题次数" width="210" align="center">
         <template slot-scope="scope">
           {{ scope.row.remainCommit}}
         </template>
@@ -117,10 +117,10 @@
     <el-dialog title="重置" :visible.sync="rechargeFormVisible">
       <el-form :model="rechargeForm">
         <el-form-item label="问卷个数">
-          <el-input-number v-model="form.remainQuestionnaire"></el-input-number>
+          <el-input-number v-model="rechargeForm.remainQuestionnaire"></el-input-number>
         </el-form-item>
         <el-form-item label="答题次数">
-          <el-input-number v-model="form.remainCommit"></el-input-number>
+          <el-input-number v-model="rechargeForm.remainCommit"></el-input-number>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -159,7 +159,7 @@
         lastEditFormId: null,
 
         rechargeForm: {
-          id: null,
+          enterpriseId: null,
           remainQuestionnaire: null,
           remainCommit: null
         },
@@ -248,8 +248,9 @@
           const params = {
             "id": this.form.id,
             "name": this.form.name,
-            "phone": this.form.phone,
-            "policies": this.form.policies
+            "paidType": this.form.paidType,
+            "remainQuestionnaire": this.form.remainQuestionnaire,
+            "remainCommit": this.form.remainCommit
           }
           saveEnterprise(params).then(response => {
             this.form.id = null
@@ -266,9 +267,11 @@
 
 
       onRecharge(index, row) {
-        this.rechargeForm.id = row.id
+        this.rechargeForm.enterpriseId = row.id
         this.rechargeForm.remainQuestionnaire = null
         this.rechargeForm.remainCommit = null
+
+        this.rechargeFormVisible = true
       },
 
       handleRechargeCancel() {
@@ -282,14 +285,15 @@
           type: 'warning'
         }).then(() => {
           const params = {
-            "id": this.rechargeForm.id,
-            "remainQuestionnaire": this.rechargeForm.remainQuestionnaire,
-            "remainCommit": this.rechargeForm.remainCommit,
+            "enterpriseId": this.rechargeForm.enterpriseId,
+            "rechargeRemainQuestionnaire": this.rechargeForm.remainQuestionnaire,
+            "rechargeRemainCommit": this.rechargeForm.remainCommit,
           }
           rechargeEnterprise(params).then(response => {
-            this.form.id = null
-            this.form.remainQuestionnaire = null
-            this.form.remainCommit = null
+            this.rechargeForm.enterpriseId = null
+            this.rechargeForm.remainQuestionnaire = null
+            this.rechargeForm.remainCommit = null
+            this.rechargeFormVisible = false
             this.fetchData()
           })
         })

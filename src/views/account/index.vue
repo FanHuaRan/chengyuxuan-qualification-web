@@ -20,14 +20,24 @@
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="110" align="center">
+      <el-table-column label="用户名" width="210" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="昵称" width="110" align="center">
+      <el-table-column label="昵称" width="210" align="center">
         <template slot-scope="scope">
           {{ scope.row.nickName }}
+        </template>
+      </el-table-column>
+      <el-table-column label="企业" width="210" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.enterpriseName }}
+        </template>
+      </el-table-column>
+      <el-table-column label="角色" width="250" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.roleNames.join(",") }}
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created" label="创建时间" width="200">
@@ -80,9 +90,9 @@
         </el-form-item>
         <el-form-item label="角色">
           <el-select v-model="form.roles" filterable multiple placeholder="角色">
-            <el-option v-if=" name === 'admin' || name === 'chengyuxuan'" key="enterpriser" label="enterpriser"
+            <el-option v-if=" name === 'admin' || name === 'chengyuxuan'" key="enterpriser" label="企业管理员"
                        value="enterpriser"></el-option>
-            <el-option key="worker" label="worker" value="worker"></el-option>
+            <el-option key="worker" label="企业用户" value="worker"></el-option>
           </el-select>
         </el-form-item>
 
