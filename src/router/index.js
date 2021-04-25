@@ -96,7 +96,7 @@ export const constantRoutes = [
         path: 'enterprise_config',
         name: '企业配置',
         component: () => import('@/views/enterprise_config/index'),
-        meta: { title: '企业配置', icon: 'el-icon-user-solid' }
+        meta: { title: '企业配置', icon: 'el-icon-s-tools' }
       },
       // {
       //   path: 'tree',
