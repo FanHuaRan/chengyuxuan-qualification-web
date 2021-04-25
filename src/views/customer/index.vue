@@ -66,7 +66,7 @@
 
       <el-table-column align="center" prop="updated" label="问卷记录" width="200">
         <template slot-scope="scope">
-          <el-button icon="el-icon-zoom-in"  size="mini"  @click="handleShowCommit(scope.row.phone)">点击查看</el-button>
+          <el-button icon="el-icon-zoom-in"  size="mini"  @click="handleShowCommit(scope.row.id)">点击查看</el-button>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="updated" label="创建时间" width="200">
@@ -208,7 +208,7 @@
 
 <script>
   import {searchCustomer, updateCustomerStatus} from '@/api/customer'
-  import {searchQuestionnaireCommitByPhone} from '@/api/questionnaire_commit'
+  import {searchQuestionnaireCommit} from '@/api/questionnaire_commit'
   import {parseTime} from "@/utils";
 
   export default {
@@ -306,9 +306,9 @@
         })
       },
 
-      handleShowCommit(phone) {
+      handleShowCommit(customerId) {
         this.commits = []
-          searchQuestionnaireCommitByPhone(phone).then(response => {
+        searchQuestionnaireCommit(customerId).then(response => {
             this.commits = response.data
             this.showCommitVisible = true
           })

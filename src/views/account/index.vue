@@ -89,7 +89,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="角色">
-          <el-select v-model="form.roles" filterable multiple placeholder="角色">
+          <el-select v-model="form.roles" filterable placeholder="角色">
             <el-option v-if=" name === 'admin' || name === 'chengyuxuan'" key="enterpriser" label="企业管理员"
                        value="enterpriser"></el-option>
             <el-option key="worker" label="企业用户" value="worker"></el-option>

@@ -92,6 +92,12 @@ export const constantRoutes = [
         component: () => import('@/views/account/index'),
         meta: { title: '账号管理', icon: 'el-icon-user-solid' }
       },
+      {
+        path: 'enterprise_config',
+        name: '企业配置',
+        component: () => import('@/views/enterprise_config/index'),
+        meta: { title: '企业配置', icon: 'el-icon-user-solid' }
+      },
       // {
       //   path: 'tree',
       //   name: 'Tree',
@@ -187,6 +193,8 @@ export const constantRoutes = [
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
+
+
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support

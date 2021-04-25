@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
-export function searchQuestionnaireCommitByPhone(phone) {
+export function searchQuestionnaireCommit(customerId) {
   return request({
-    url: '/questionnaire_commit/search_by_phone',
+    url: '/questionnaire_commit/search',
     method: 'get',
     params: {
-      phone: phone
+      customerId: customerId
     }
   })
 }
